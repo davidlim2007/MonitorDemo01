@@ -50,27 +50,29 @@ namespace MonitorDemo01
                 // until it succeeds.
                 //
                 // The Monitor class provides a mechanism that synchronizes access
-                // to objects. In essence, it controls access to certain resources
-                // (much like a Mutex).
+                // to resources or code (much like a Mutex).
                 //
                 // For more information, please refer to:
                 // https://msdn.microsoft.com/en-us/library/system.threading.monitor(v=vs.110).aspx
                 while (true)
                 {
                     // Using Monitor.TryEnter(), the current thread attempts to
-                    // access an object (in this case, objForThreadSync).
+                    // access a set of code (labeled below as "GUARDED CODE").
                     //
                     // It returns a bool value indicating whether or not the
                     // thread has successfully acquired an exclusive lock on
-                    // objForThreadSync (i.e. if a lock is available).
+                    // objForThreadSync (i.e. if a lock is available), which
+                    // allows it to enter the GUARDED CODE.
                     //
                     // Calling TryEnter() marks the beginning of a critical
-                    // section.
+                    // section. objForThreadSync is like a key that is used for accessing
+                    // a critical section. Its actual type or value is unimportant.
                     //
                     // For more information, please refer to:
                     // https://msdn.microsoft.com/en-us/library/4tssbxcw(v=vs.110).aspx
                     if ((bEntered = Monitor.TryEnter(objForThreadSync)) == true)
                     {
+                        // GUARDED CODE.
                         // If the current thread successfully acquires the lock, 
                         // the thread will go to sleep for 5 seconds, before breaking out
                         // of the loop.
@@ -103,6 +105,9 @@ namespace MonitorDemo01
 
                 if (bEntered == true)
                 {
+                    // A thread must exit the Monitor after
+                    // entering so as to allow other threads
+                    // to enter.
                     Monitor.Exit(objForThreadSync);
                 }
             }
